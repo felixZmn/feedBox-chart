@@ -71,23 +71,18 @@ Validate that only one routing resource is enabled.
 {{- end }}
 
 {{/*
-Validate SSO JWT settings when SSO is enabled. Issuer and audience must be
-set — mp.jwt.verify.issuer=NONE disables issuer checks and is not allowed.
+Validate OIDC web-app settings when SSO is enabled.
+authServerUrl is the IdP issuer / discovery URL; encryptionSecret keeps
+session cookies stable across restarts and replicas.
 */}}
 {{- define "feedbox.validateSso" -}}
-{{- if not .Values.sso.jwtPublicKeyLocation -}}
-{{- fail "sso.jwtPublicKeyLocation is required when sso.enabled is true." -}}
-{{- end }}
-{{- if not .Values.sso.jwtIssuer -}}
-{{- fail "sso.jwtIssuer is required when sso.enabled is true (do not use NONE)." -}}
-{{- end }}
-{{- if eq .Values.sso.jwtIssuer "NONE" -}}
-{{- fail "sso.jwtIssuer must not be NONE — set the real IdP issuer URL." -}}
-{{- end }}
-{{- if not .Values.sso.jwtAudience -}}
-{{- fail "sso.jwtAudience is required when sso.enabled is true (usually the OAuth client id)." -}}
+{{- if not .Values.sso.authServerUrl -}}
+{{- fail "sso.authServerUrl is required when sso.enabled is true (IdP issuer / OIDC discovery URL)." -}}
 {{- end }}
 {{- if not .Values.sso.clientId -}}
 {{- fail "sso.clientId is required when sso.enabled is true." -}}
+{{- end }}
+{{- if not .Values.sso.encryptionSecret -}}
+{{- fail "sso.encryptionSecret is required when sso.enabled is true (32+ chars; encrypts the OIDC session cookie)." -}}
 {{- end }}
 {{- end }}

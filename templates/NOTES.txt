@@ -25,7 +25,8 @@ Congratulations! You have successfully deployed {{ .Chart.Name }} (Release: {{ .
 2. Configuration & Security Notes:
    • SSO Status: {{ if .Values.sso.enabled }}ENABLED{{ else }}DISABLED{{ end }}
    {{- if .Values.sso.enabled }}
-     ⚠️  Ensure `clientId`, `redirectUri`, `authServerUrl`, and `jwtPublicKeyLocation` are properly configured in values.yaml.
+     ⚠️  Ensure `authServerUrl`, `clientId`, and `encryptionSecret` are set (optional `clientSecret` for confidential clients).
+     ⚠️  IdP Redirect URI must be exactly https://<host>/oidc (Quarkus OIDC callback).
    {{- end }}
    • Database: Credentials are sourced from Kubernetes Secret: `{{ .Values.dbSecretName }}` (key: `{{ .Values.database.jdbcUrlKey }}`)
    • Security Context: Pods enforce `runAsNonRoot` (UID 1000), `readOnlyRootFilesystem`, `seccompProfile: RuntimeDefault`, and all Linux capabilities are dropped.

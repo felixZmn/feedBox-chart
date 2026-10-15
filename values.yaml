@@ -103,15 +103,13 @@ extraEnvFrom: []
 
 sso:
   enabled: true
-  clientId: ""
-  redirectUri: ""
+  # IdP issuer / OIDC discovery URL (e.g. https://idp.example/application/o/app/).
   authServerUrl: ""
-  jwtPublicKeyLocation: ""
-  # Required when enabled: must match the IdP issuer claim (never use NONE).
-  jwtIssuer: ""
-  # Required when enabled: typically the OAuth client id (aud claim).
-  jwtAudience: ""
-  endSessionEndpoint: ""
+  clientId: ""
+  # Optional — set for confidential clients; omit for public + PKCE.
+  clientSecret: ""
+  # Required — 32+ chars; encrypts the small OIDC session reference cookie across pods/restarts.
+  encryptionSecret: ""
 
 database:
   dbSecretName: newsfeed-pguser-newsfeed
