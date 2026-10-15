@@ -34,6 +34,7 @@ jobs:
       - name: Helm template
         run: >
           helm template "${{ steps.chart.outputs.name }}" .
+          --set database.dbSecretName=ci-db-secret
           --set sso.clientId=ci-client
           --set sso.authServerUrl=https://idp.example/application/o/ci/
           --set sso.encryptionSecret=ci-encryption-secret-at-least-32b

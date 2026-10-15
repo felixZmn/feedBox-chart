@@ -78,11 +78,10 @@ livenessProbe:
   timeoutSeconds: 5
   failureThreshold: 3
 
-# Application ConfigMap data
+# Application ConfigMap data (UA defaults to FeedBox/${quarkus.application.version} in the app)
 config:
   quarkus.http.host: "0.0.0.0"
   quarkus.http.port: "8080"
-  app.http.user-agent: "FeedBox/3.0.x"
 
 # Extend environment variables easily
 extraEnv: []
@@ -112,10 +111,12 @@ sso:
   encryptionSecret: ""
 
 database:
-  dbSecretName: newsfeed-pguser-newsfeed
+  # Required at deploy time — name of a Secret holding the JDBC URL (see jdbcUrlKey).
+  dbSecretName: ""
   jdbcUrlKey: jdbc-uri
 
 # NOTE: Only enable ONE of ingress or httpRoute. Kubernetes does not enforce mutual exclusivity.
+# Both default off; enable the one that matches your cluster.
 ingress:
   enabled: false
   className: nginx
@@ -131,7 +132,7 @@ ingress:
   #     - feedbox.example.com
 
 httpRoute:
-  enabled: true
+  enabled: false
   annotations: {}
   parentRefs:
     - name: gateway
