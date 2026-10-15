@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="https://github.com/felixZmn/feedBox/blob/main/src/main/resources/META-INF/resources/icons/package.svg" alt="FeedBox Logo" width="100"/>
+  <img src="https://raw.githubusercontent.com/felixZmn/feedBox/main/feedBox/src/main/resources/META-INF/resources/icons/package.svg" alt="FeedBox Logo" width="100"/>
 </p>
 
 <h1 align="center">FeedBox Helm Chart</h1>
@@ -18,13 +18,13 @@
   <a href="https://github.com/felixzmn/feedbox-chart/releases">
     <img src="https://img.shields.io/github/v/release/felixzmn/feedbox-chart?logo=github" alt="Latest Release"/>
   </a>
-  <!-- Helm Chart -->
-  <a href="https://github.com/felixzmn/feedbox-chart/pkgs/container/helm%2Ffeedbox">
+  <!-- Helm Chart OCI -->
+  <a href="https://ghcr.io/felixzmn/helm/feedbox">
     <img src="https://img.shields.io/badge/helm-chart-blue?logo=helm" alt="Helm Chart"/>
   </a>
-  <!-- License -->
-  <a href="./LICENSE">
-    <img src="https://img.shields.io/github/license/felixzmn/feedbox-chart" alt="License"/>
+  <!-- App -->
+  <a href="https://github.com/felixZmn/feedBox">
+    <img src="https://img.shields.io/badge/app-feedBox-informational" alt="FeedBox app"/>
   </a>
 </p>
 
@@ -41,14 +41,35 @@ oci://ghcr.io/felixzmn/helm
 ## Installation
 
 ```bash
-helm install feedbox oci://ghcr.io/felixzmn/helm/feedbox --version <version>
+helm install feedbox oci://ghcr.io/felixzmn/helm/feedbox --version <version> \
+  --set database.dbSecretName=<jdbc-secret> \
+  --set sso.authServerUrl=<idp-issuer> \
+  --set sso.clientId=<client-id> \
+  --set sso.encryptionSecret=<32+-char-secret>
 ```
 
 Example:
 
 ```bash
-helm install feedbox oci://ghcr.io/felixzmn/helm/feedbox --version 1.2.3
+helm install feedbox oci://ghcr.io/felixzmn/helm/feedbox --version 3.8.1 \
+  --set database.dbSecretName=feedbox-pguser \
+  --set sso.authServerUrl=https://idp.example/application/o/feedbox/ \
+  --set sso.clientId=feedbox \
+  --set sso.encryptionSecret='please-change-me-to-32-chars-min'
 ```
+
+Ingress and HTTPRoute both default to **disabled**. Enable one explicitly if you need external routing.
+
+## Key values
+
+| Value | Default | Notes |
+|-------|---------|--------|
+| `database.dbSecretName` | `""` (required) | Secret name with JDBC URL |
+| `database.jdbcUrlKey` | `jdbc-uri` | Key inside that secret |
+| `ingress.enabled` | `false` | Classic Ingress |
+| `httpRoute.enabled` | `false` | Gateway API HTTPRoute |
+| `sso.enabled` | `true` | Quarkus OIDC web-app |
+| `config.app.http.user-agent` | *(unset)* | App default is `FeedBox/<version>` |
 
 ## Upgrade
 

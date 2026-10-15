@@ -71,6 +71,15 @@ Validate that only one routing resource is enabled.
 {{- end }}
 
 {{/*
+Require database.dbSecretName so JDBC URL can be loaded from a Secret.
+*/}}
+{{- define "feedbox.validateDatabase" -}}
+{{- if not .Values.database.dbSecretName -}}
+{{- fail "database.dbSecretName is required (Kubernetes Secret name containing the JDBC URL)." -}}
+{{- end }}
+{{- end }}
+
+{{/*
 Validate OIDC web-app settings when SSO is enabled.
 authServerUrl is the IdP issuer / discovery URL; encryptionSecret keeps
 session cookies stable across restarts and replicas.
