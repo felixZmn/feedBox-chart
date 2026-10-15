@@ -52,8 +52,13 @@ spec:
                   name: {{ .Values.database.dbSecretName }}
                   key: {{ .Values.database.jdbcUrlKey }}
           {{- if .Values.sso.enabled }}
+            {{- include "feedbox.validateSso" . }}
             - name: MP_JWT_VERIFY_PUBLICKEY_LOCATION
               value: {{ .Values.sso.jwtPublicKeyLocation | quote }}
+            - name: MP_JWT_VERIFY_ISSUER
+              value: {{ .Values.sso.jwtIssuer | quote }}
+            - name: MP_JWT_VERIFY_AUDIENCES
+              value: {{ .Values.sso.jwtAudience | quote }}
             - name: SSO_CLIENTID
               value: {{ .Values.sso.clientId | quote }}
             - name: SSO_REDIRECTURI

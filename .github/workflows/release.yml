@@ -66,7 +66,16 @@ jobs:
 
       - name: Helm template
         if: steps.decide.outputs.released == 'true'
-        run: helm template "${{ steps.chart.outputs.name }}" . > /dev/null
+        run: >
+          helm template "${{ steps.chart.outputs.name }}" .
+          --set sso.clientId=ci-client
+          --set sso.jwtAudience=ci-client
+          --set sso.jwtIssuer=https://idp.example/application/o/ci/
+          --set sso.jwtPublicKeyLocation=https://idp.example/application/o/ci/jwks/
+          --set sso.redirectUri=https://feedbox.example.com
+          --set sso.authServerUrl=https://idp.example/application/o/
+          --set sso.endSessionEndpoint=https://idp.example/application/o/ci/end-session/
+          > /dev/null
 
       - name: Normalize GHCR owner to lowercase
         if: steps.decide.outputs.released == 'true'

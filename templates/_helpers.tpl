@@ -69,3 +69,25 @@ Validate that only one routing resource is enabled.
 {{- fail "Only one of ingress.enabled or httpRoute.enabled may be true; set exactly one to false." -}}
 {{- end }}
 {{- end }}
+
+{{/*
+Validate SSO JWT settings when SSO is enabled. Issuer and audience must be
+set — mp.jwt.verify.issuer=NONE disables issuer checks and is not allowed.
+*/}}
+{{- define "feedbox.validateSso" -}}
+{{- if not .Values.sso.jwtPublicKeyLocation -}}
+{{- fail "sso.jwtPublicKeyLocation is required when sso.enabled is true." -}}
+{{- end }}
+{{- if not .Values.sso.jwtIssuer -}}
+{{- fail "sso.jwtIssuer is required when sso.enabled is true (do not use NONE)." -}}
+{{- end }}
+{{- if eq .Values.sso.jwtIssuer "NONE" -}}
+{{- fail "sso.jwtIssuer must not be NONE — set the real IdP issuer URL." -}}
+{{- end }}
+{{- if not .Values.sso.jwtAudience -}}
+{{- fail "sso.jwtAudience is required when sso.enabled is true (usually the OAuth client id)." -}}
+{{- end }}
+{{- if not .Values.sso.clientId -}}
+{{- fail "sso.clientId is required when sso.enabled is true." -}}
+{{- end }}
+{{- end }}
