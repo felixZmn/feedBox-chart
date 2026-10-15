@@ -107,6 +107,10 @@ sso:
   redirectUri: ""
   authServerUrl: ""
   jwtPublicKeyLocation: ""
+  # Required when enabled: must match the IdP issuer claim (never use NONE).
+  jwtIssuer: ""
+  # Required when enabled: typically the OAuth client id (aud claim).
+  jwtAudience: ""
   endSessionEndpoint: ""
 
 database:
