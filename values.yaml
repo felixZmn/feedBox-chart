@@ -9,6 +9,12 @@ image:
 imagePullSecrets: []
 # - name: regcred
 
+# When TLS terminates at ingress/Gateway, Quarkus only sees http://:8080 and OIDC
+# builds redirect_uri as http://…. Set true only if the proxy sends X-Forwarded-Proto
+# (and typically X-Forwarded-Host). Leave false for plain-HTTP or direct TLS to the pod.
+proxy:
+  forwardHeaders: false
+
 nameOverride: ""
 fullnameOverride: ""
 

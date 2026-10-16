@@ -52,7 +52,7 @@ helm install feedbox oci://ghcr.io/felixzmn/helm/feedbox --version <version> \
 Example:
 
 ```bash
-helm install feedbox oci://ghcr.io/felixzmn/helm/feedbox --version 4.0.0 \
+helm install feedbox oci://ghcr.io/felixzmn/helm/feedbox --version 4.0.1 \
   --set database.dbSecretName=feedbox-pguser \
   --set sso.authServerUrl=https://idp.example/application/o/feedbox/ \
   --set sso.clientId=feedbox \
@@ -82,7 +82,12 @@ Ingress and HTTPRoute both default to **disabled**. Enable one explicitly if you
 | `sso.buttonLabel` | `Sign in with SSO` | Login-panel button text |
 | `sso.existingSecret` | `""` | Use an existing Secret instead of chart-managed |
 | `sso.encryptionSecret` | `""` | 32+ chars when `existingSecret` is empty |
+| `proxy.forwardHeaders` | `false` | Honor `X-Forwarded-*` (TLS at ingress/Gateway only) |
 | `config.app.http.user-agent` | *(unset)* | App default is `FeedBox/<version>` |
+
+Set `proxy.forwardHeaders: true` only when TLS terminates in front of the pod and
+the proxy sends `X-Forwarded-Proto` (so OIDC `redirect_uri` is `https://…/oidc`).
+Leave it `false` for plain HTTP or TLS terminated on the container.
 
 ## Upgrade
 
