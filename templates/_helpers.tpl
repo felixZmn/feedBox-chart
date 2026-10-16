@@ -68,6 +68,12 @@ Validate that only one routing resource is enabled.
 {{- if and .Values.ingress.enabled .Values.httpRoute.enabled -}}
 {{- fail "Only one of ingress.enabled or httpRoute.enabled may be true; set exactly one to false." -}}
 {{- end }}
+{{- if and .Values.ingress.enabled (not .Values.ingress.hosts) -}}
+{{- fail "ingress.hosts must be set when ingress.enabled is true." -}}
+{{- end }}
+{{- if and .Values.httpRoute.enabled (not .Values.httpRoute.parentRefs) -}}
+{{- fail "httpRoute.parentRefs must be set when httpRoute.enabled is true." -}}
+{{- end }}
 {{- end }}
 
 {{/*
@@ -80,9 +86,20 @@ Require database.dbSecretName so JDBC URL can be loaded from a Secret.
 {{- end }}
 
 {{/*
+Name of the Secret holding OIDC client/encryption credentials.
+*/}}
+{{- define "feedbox.ssoSecretName" -}}
+{{- if .Values.sso.existingSecret -}}
+{{- .Values.sso.existingSecret -}}
+{{- else -}}
+{{- printf "%s-sso" (include "feedbox.fullname" .) -}}
+{{- end -}}
+{{- end }}
+
+{{/*
 Validate OIDC web-app settings when SSO is enabled.
-authServerUrl is the IdP issuer / discovery URL; encryptionSecret keeps
-session cookies stable across restarts and replicas.
+authServerUrl is the IdP issuer / discovery URL. Session cookie encryption
+comes from a Kubernetes Secret (chart-managed or sso.existingSecret).
 */}}
 {{- define "feedbox.validateSso" -}}
 {{- if not .Values.sso.authServerUrl -}}
@@ -91,7 +108,12 @@ session cookies stable across restarts and replicas.
 {{- if not .Values.sso.clientId -}}
 {{- fail "sso.clientId is required when sso.enabled is true." -}}
 {{- end }}
+{{- if not .Values.sso.existingSecret -}}
 {{- if not .Values.sso.encryptionSecret -}}
-{{- fail "sso.encryptionSecret is required when sso.enabled is true (32+ chars; encrypts the OIDC session cookie)." -}}
+{{- fail "sso.encryptionSecret is required when sso.existingSecret is empty (32+ chars; or set sso.existingSecret)." -}}
+{{- end }}
+{{- if lt (len .Values.sso.encryptionSecret) 32 -}}
+{{- fail "sso.encryptionSecret must be at least 32 characters (encrypts the OIDC session cookie)." -}}
+{{- end }}
 {{- end }}
 {{- end }}

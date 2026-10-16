@@ -2,7 +2,7 @@ apiVersion: v2
 name: feedbox
 description: Helm chart for FeedBox — a self-hosted RSS/Atom feed reader
 type: application
-version: 3.8.1
+version: 3.8.3
 appVersion: "3.6.15"
 keywords:
   - java
