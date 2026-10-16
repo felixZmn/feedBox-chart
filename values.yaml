@@ -105,9 +105,14 @@ sso:
   # IdP issuer / OIDC discovery URL (e.g. https://idp.example/application/o/app/).
   authServerUrl: ""
   clientId: ""
+  # Prefer an existing Secret; when set, encryptionSecret/clientSecret values are ignored.
+  existingSecret: ""
+  encryptionSecretKey: encryption-secret
+  clientSecretKey: client-secret
+  # Used only when existingSecret is empty — written into a chart-managed Secret (not Deployment env).
   # Optional — set for confidential clients; omit for public + PKCE.
   clientSecret: ""
-  # Required — 32+ chars; encrypts the small OIDC session reference cookie across pods/restarts.
+  # Required when existingSecret is empty — 32+ chars; encrypts the OIDC session cookie.
   encryptionSecret: ""
 
 database:
@@ -119,27 +124,27 @@ database:
 # Both default off; enable the one that matches your cluster.
 ingress:
   enabled: false
-  className: nginx
+  className: ""
   annotations: {}
-  hosts:
-    - host: feedbox.example.com
-      paths:
-        - path: /
-          pathType: Prefix
+  hosts: []
+  # Example when enabling:
+  # hosts:
+  #   - host: feedbox.example.com
+  #     paths:
+  #       - path: /
+  #         pathType: Prefix
   tls: []
-  # - secretName: feedbox-tls
-  #   hosts:
-  #     - feedbox.example.com
 
 httpRoute:
   enabled: false
   annotations: {}
-  parentRefs:
-    - name: gateway
-      sectionName: http
-      namespace: default
-  hostnames:
-    - feedbox.example.com
+  parentRefs: []
+  # Example when enabling:
+  # parentRefs:
+  #   - name: gateway
+  #     sectionName: http
+  #     namespace: default
+  hostnames: []
   rules:
     - matches:
         - path:

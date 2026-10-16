@@ -51,12 +51,14 @@ helm install feedbox oci://ghcr.io/felixzmn/helm/feedbox --version <version> \
 Example:
 
 ```bash
-helm install feedbox oci://ghcr.io/felixzmn/helm/feedbox --version 3.8.1 \
+helm install feedbox oci://ghcr.io/felixzmn/helm/feedbox --version 3.8.3 \
   --set database.dbSecretName=feedbox-pguser \
   --set sso.authServerUrl=https://idp.example/application/o/feedbox/ \
   --set sso.clientId=feedbox \
   --set sso.encryptionSecret='please-change-me-to-32-chars-min'
 ```
+
+`encryptionSecret` / `clientSecret` are written into a chart-managed Kubernetes Secret and mounted via `secretKeyRef` (not plain Deployment env). Prefer `sso.existingSecret` in production.
 
 Ingress and HTTPRoute both default to **disabled**. Enable one explicitly if you need external routing.
 
@@ -69,6 +71,8 @@ Ingress and HTTPRoute both default to **disabled**. Enable one explicitly if you
 | `ingress.enabled` | `false` | Classic Ingress |
 | `httpRoute.enabled` | `false` | Gateway API HTTPRoute |
 | `sso.enabled` | `true` | Quarkus OIDC web-app |
+| `sso.existingSecret` | `""` | Use an existing Secret instead of chart-managed |
+| `sso.encryptionSecret` | `""` | 32+ chars when `existingSecret` is empty |
 | `config.app.http.user-agent` | *(unset)* | App default is `FeedBox/<version>` |
 
 ## Upgrade

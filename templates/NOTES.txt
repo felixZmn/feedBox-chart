@@ -13,8 +13,12 @@ Congratulations! You have successfully deployed {{ .Chart.Name }} (Release: {{ .
 {{- end }}
 {{- else if .Values.httpRoute.enabled }}
    Kubernetes HTTPRoute is active.
+   {{- if .Values.httpRoute.hostnames }}
    Hostname: {{ index .Values.httpRoute.hostnames 0 }}
+   {{- end }}
+   {{- if .Values.httpRoute.parentRefs }}
    Gateway:  {{ with index .Values.httpRoute.parentRefs 0 }}{{ .name }}/{{ .sectionName }}{{ end }}
+   {{- end }}
 {{- else if contains "ClusterIP" $.Values.service.type }}
    The service is internal (ClusterIP). To access it locally, run:
      export POD_NAME=$(kubectl get pods --namespace {{ $namespace }} -l "app.kubernetes.io/name={{ include "feedbox.name" . }},app.kubernetes.io/instance={{ $.Release.Name }}" -o jsonpath="{.items[0].metadata.name}")
@@ -25,8 +29,9 @@ Congratulations! You have successfully deployed {{ .Chart.Name }} (Release: {{ .
 2. Configuration & Security Notes:
    • SSO Status: {{ if .Values.sso.enabled }}ENABLED{{ else }}DISABLED{{ end }}
    {{- if .Values.sso.enabled }}
-     ⚠️  Ensure `authServerUrl`, `clientId`, and `encryptionSecret` are set (optional `clientSecret` for confidential clients).
+     ⚠️  Ensure `authServerUrl`, `clientId`, and SSO Secret (`sso.existingSecret` or chart-managed from `encryptionSecret`) are set.
      ⚠️  IdP Redirect URI must be exactly https://<host>/oidc (Quarkus OIDC callback).
+     • SSO Secret: `{{ include "feedbox.ssoSecretName" . }}`
    {{- end }}
    • Database: Credentials are sourced from Kubernetes Secret: `{{ .Values.database.dbSecretName }}` (key: `{{ .Values.database.jdbcUrlKey }}`)
    • Security Context: Pods enforce `runAsNonRoot` (UID 1000), `readOnlyRootFilesystem`, `seccompProfile: RuntimeDefault`, and all Linux capabilities are dropped.

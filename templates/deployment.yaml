@@ -60,10 +60,23 @@ spec:
             - name: QUARKUS_OIDC_CLIENT_ID
               value: {{ .Values.sso.clientId | quote }}
             - name: QUARKUS_OIDC_TOKEN_STATE_MANAGER_ENCRYPTION_SECRET
-              value: {{ .Values.sso.encryptionSecret | quote }}
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "feedbox.ssoSecretName" . }}
+                  key: {{ .Values.sso.encryptionSecretKey }}
             {{- if .Values.sso.clientSecret }}
             - name: QUARKUS_OIDC_CREDENTIALS_SECRET
-              value: {{ .Values.sso.clientSecret | quote }}
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "feedbox.ssoSecretName" . }}
+                  key: {{ .Values.sso.clientSecretKey }}
+            {{- else if .Values.sso.existingSecret }}
+            - name: QUARKUS_OIDC_CREDENTIALS_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "feedbox.ssoSecretName" . }}
+                  key: {{ .Values.sso.clientSecretKey }}
+                  optional: true
             {{- end }}
           {{- end }}
           {{- with .Values.extraEnv }}
