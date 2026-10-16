@@ -59,6 +59,10 @@ spec:
               value: {{ .Values.sso.authServerUrl | quote }}
             - name: QUARKUS_OIDC_CLIENT_ID
               value: {{ .Values.sso.clientId | quote }}
+            {{- if .Values.sso.buttonLabel }}
+            - name: APP_SSO_BUTTON_LABEL
+              value: {{ .Values.sso.buttonLabel | quote }}
+            {{- end }}
             - name: QUARKUS_OIDC_TOKEN_STATE_MANAGER_ENCRYPTION_SECRET
               valueFrom:
                 secretKeyRef:

@@ -105,6 +105,8 @@ sso:
   # IdP issuer / OIDC discovery URL (e.g. https://idp.example/application/o/app/).
   authServerUrl: ""
   clientId: ""
+  # Login-panel button text (e.g. "Sign in with Authentik"). Ready for multi-IdP later.
+  buttonLabel: "Sign in with SSO"
   # Prefer an existing Secret; when set, encryptionSecret/clientSecret values are ignored.
   existingSecret: ""
   encryptionSecretKey: encryption-secret
