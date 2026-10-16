@@ -52,6 +52,13 @@ jobs:
           fi
 
           if git rev-parse -q --verify "refs/tags/${version}" >/dev/null; then
+            tagged_app="$(git show "refs/tags/${version}:Chart.yaml" | awk '/^appVersion:/ {print $2}' | tr -d '"')"
+            app_version="${{ steps.chart.outputs.app_version }}"
+            if [[ "${tagged_app}" != "${app_version}" ]]; then
+              echo "Refusing to reuse chart version ${version}: tag has appVersion ${tagged_app}, Chart.yaml has ${app_version}."
+              echo "Bump the chart version. Republishing ${version} would overwrite the OCI chart."
+              exit 1
+            fi
             echo "Tag ${version} already exists; skipping release."
             echo "released=false" >> "${GITHUB_OUTPUT}"
             exit 0

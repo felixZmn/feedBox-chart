@@ -11,7 +11,7 @@
   "customManagers": [
     {
       "customType": "regex",
-      "fileMatch": ["^Chart\\.yaml$"],
+      "managerFilePatterns": ["/^Chart\\.yaml$/"],
       "matchStrings": [
         "appVersion:\\s*[\"']?(?<currentValue>[^\"'\\s]+)[\"']?"
       ],
@@ -26,26 +26,53 @@
       "matchDatasources": ["docker"],
       "matchPackageNames": ["ghcr.io/felixzmn/docker/feedbox"],
       "matchUpdateTypes": ["patch"],
-      "bumpVersion": "patch",
       "automerge": true,
-      "automergeType": "pr"
+      "automergeType": "pr",
+      "bumpVersions": [
+        {
+          "name": "Bump Helm chart version",
+          "filePatterns": ["/^Chart\\.yaml$/"],
+          "matchStrings": [
+            "(?:^|\\n)version:\\s+[\"']?(?<version>\\d+\\.\\d+\\.\\d+)[\"']?"
+          ],
+          "bumpType": "patch"
+        }
+      ]
     },
     {
       "description": "Automerge minor image updates and bump chart minor version",
       "matchDatasources": ["docker"],
       "matchPackageNames": ["ghcr.io/felixzmn/docker/feedbox"],
       "matchUpdateTypes": ["minor"],
-      "bumpVersion": "minor",
       "automerge": true,
-      "automergeType": "pr"
+      "automergeType": "pr",
+      "bumpVersions": [
+        {
+          "name": "Bump Helm chart version",
+          "filePatterns": ["/^Chart\\.yaml$/"],
+          "matchStrings": [
+            "(?:^|\\n)version:\\s+[\"']?(?<version>\\d+\\.\\d+\\.\\d+)[\"']?"
+          ],
+          "bumpType": "minor"
+        }
+      ]
     },
     {
-      "description": "Major image updates require a human merge",
+      "description": "Major image updates require a human merge and bump chart major version",
       "matchDatasources": ["docker"],
       "matchPackageNames": ["ghcr.io/felixzmn/docker/feedbox"],
       "matchUpdateTypes": ["major"],
-      "bumpVersion": "major",
-      "automerge": false
+      "automerge": false,
+      "bumpVersions": [
+        {
+          "name": "Bump Helm chart version",
+          "filePatterns": ["/^Chart\\.yaml$/"],
+          "matchStrings": [
+            "(?:^|\\n)version:\\s+[\"']?(?<version>\\d+\\.\\d+\\.\\d+)[\"']?"
+          ],
+          "bumpType": "major"
+        }
+      ]
     }
   ],
   "timezone": "Europe/Berlin"
