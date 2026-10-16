@@ -52,7 +52,7 @@ helm install feedbox oci://ghcr.io/felixzmn/helm/feedbox --version <version> \
 Example:
 
 ```bash
-helm install feedbox oci://ghcr.io/felixzmn/helm/feedbox --version 3.8.3 \
+helm install feedbox oci://ghcr.io/felixzmn/helm/feedbox --version 4.0.0 \
   --set database.dbSecretName=feedbox-pguser \
   --set sso.authServerUrl=https://idp.example/application/o/feedbox/ \
   --set sso.clientId=feedbox \
@@ -61,6 +61,12 @@ helm install feedbox oci://ghcr.io/felixzmn/helm/feedbox --version 3.8.3 \
 ```
 
 `encryptionSecret` / `clientSecret` are written into a chart-managed Kubernetes Secret and mounted via `secretKeyRef` (not plain Deployment env). Prefer `sso.existingSecret` in production.
+
+### Breaking change (4.0.0)
+
+Chart **4.0.0** is the SemVer-correct release for the Quarkus OIDC web-app switch.
+Values from ≤3.6.x (`jwtPublicKeyLocation`, `redirectUri`, `secretRef`, …) are not compatible.
+The interim **3.7.x / 3.8.x** chart versions carried that break under a minor bump by mistake — use **4.0.0**.
 
 Ingress and HTTPRoute both default to **disabled**. Enable one explicitly if you need external routing.
 
